@@ -1,4 +1,8 @@
 const express = require('express')
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+
 const router = express.Router()
 
 // Including customer model
@@ -12,14 +16,65 @@ const { customerValidation } = require('../validation/validation');
  * @desc Registering customer
  * @access Public
  */
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
     const { error } = customerValidation(req.body);
     if (error) {
         res.status(404).json({ error: error.details[0].message });
     }
-    let customer = new Customer(req.body);
-    customer = await customer.save();
-    res.status(200).json({ customer, msg: 'Customer successfully registered.' });
+    Customer.findOne({ email: req.body.email }).then(async (customer) => {
+        if (customer) {
+            res.status(404).json({ error: 'User with same e-mail address already exists.' });
+        } else {
+            let customer = {
+                name: req.body.name,
+                email: req.body.email,
+                password: bcrypt.hashSync(req.body.password, 10),
+                phone: req.body.phone,
+                birthDay: req.body.birthDay
+            }
+            customer = new Customer(customer);
+            customer = await customer.save();
+            res.status(200).json({ customer, msg: 'Customer successfully registered.' });
+        }
+    })
+})
+
+/**
+ * @route POST /api/customers/login
+ * @desc Loging customer
+ * @access Public
+ */
+router.post('/login', async (req, res) => {
+    Customer.findOne({ email: req.body.email }).then(customer => {
+        if (customer) {
+            bcrypt.compare(req.body.password, customer.password).then(valid => {
+                if (valid) {
+                    const payload = {
+                        id: customer._id,
+                        name: customer.name,
+                        email: customer.email,
+                        phone: customer.phone,
+                        birthDay: customer.birthDay,
+                        role: customer.role
+                    }
+                    jwt.sign(payload, process.env.SECRET, (err, token) => {
+                        res.status(200).json({ token: `Bearer ${token}`, msg: 'Sucessfully logged in.' });
+                    });
+                } else {
+                    res.status(404).json({ error: "Wrong password, please try again." });
+                }
+            })
+        }
+    })
+})
+
+/**
+ * @route GET /api/customers/profile
+ * @desc Profile of customer
+ * @access Public
+ */
+router.get('/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
+    res.status(200).json(req.user);
 })
 
 /**

@@ -1,13 +1,24 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const dotenv = require('dotenv');
+const passport = require('passport');
+
+// Including JWT passport strategy
+const jwtStrategy = require('./jwt/passport');
 
 // Initializing dotenv config
 dotenv.config();
 
 const app = express();
 
+// Establishing body parser
 app.use(express.json());
+
+// Establishing passport initialization
+app.use(passport.initialize());
+
+// Establishing JWT passport strategy
+jwtStrategy(passport);
 
 const PORT = process.env.PORT || 3000;
 
