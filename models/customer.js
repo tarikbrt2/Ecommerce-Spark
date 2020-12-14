@@ -4,7 +4,7 @@ const customerSchema = new mongoose.Schema({
     name: String,
     email: String,
     phone: String,
-    birthDate: Date
+    birthDay: String
   });
 
   module.exports = Customer = mongoose.model("Customer", customerSchema);

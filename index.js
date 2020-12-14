@@ -7,6 +7,8 @@ dotenv.config();
 
 const app = express();
 
+app.use(express.json());
+
 const PORT = process.env.PORT || 3000;
 
 // Including models
@@ -18,7 +20,7 @@ const { customerValidation, orderValidation, shippmentValidation, productValidat
 // Connection to DB 
 mongoose
   .connect(
-    'mongodb+srv://cluster0.xvjgt.mongodb.net/root?retryWrites=true&w=majority',
+    'mongodb+srv://cluster0.xvjgt.mongodb.net/ecommerce?retryWrites=true&w=majority',
     {
       auth: { user: process.env.DB_USER, password: process.env.DB_PASSWORD },
       authSource: 'admin',
@@ -37,4 +39,10 @@ mongoose
   }
   )
   .catch(console.error);
+
+// Customers api route
+const customersRouter = require('./routes/customer');
+
+// Customers routing middleware
+app.use('/api/customers', customersRouter);
 
