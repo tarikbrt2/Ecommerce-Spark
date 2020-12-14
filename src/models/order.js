@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-    createdAt: Date,
+    createdAt: { type: Date, default: Date.now() },
     cost: Number,
     deliveryAddress: String
   });

@@ -40,9 +40,15 @@ mongoose
   )
   .catch(console.error);
 
-// Customers api route
+// Customers API route
 const customersRouter = require('./routes/customer');
+
+// Orders API route
+const ordersRouter = require('./routes/orders');
 
 // Customers routing middleware
 app.use('/api/customers', customersRouter);
+
+// Orders routing middleware
+app.use('/api/orders', ordersRouter);
 
