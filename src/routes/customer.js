@@ -19,11 +19,11 @@ router.post('/', async (req, res) => {
     }
     let customer = new Customer(req.body);
     customer = await customer.save();
-    return res.status(200).json({ customer, msg: 'Customer successfully registered.' });
+    res.status(200).json({ customer, msg: 'Customer successfully registered.' });
 })
 
 /**
- * @route GET /api/customers/
+ * @route GET /api/customers/:id
  * @desc Showing customer info
  * @access Private
  */
@@ -40,7 +40,7 @@ router.get('/:id', async (req, res) => {
 
 /**
  * @route PUT /api/customers/:id
- * @desc Showing customer info
+ * @desc Updating customer info
  * @access Private
  */
 router.put('/:id', (req, res) => {

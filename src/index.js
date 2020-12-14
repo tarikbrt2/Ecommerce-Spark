@@ -44,11 +44,23 @@ mongoose
 const customersRouter = require('./routes/customer');
 
 // Orders API route
-const ordersRouter = require('./routes/orders');
+const ordersRouter = require('./routes/order');
+
+// Products API route
+const productsRouter = require('./routes/product');
+
+// Shippment API route
+const shippmentRouter = require('./routes/shippment');
 
 // Customers routing middleware
 app.use('/api/customers', customersRouter);
 
 // Orders routing middleware
 app.use('/api/orders', ordersRouter);
+
+// Products routing middleware
+app.use('/api/products', productsRouter);
+
+// Shippment routing middleware
+app.use('/api/shippments', shippmentRouter);
 

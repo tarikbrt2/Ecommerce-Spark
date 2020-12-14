@@ -9,7 +9,7 @@ const { orderValidation } = require('../validation/validation');
 
 /**
  * @route POST /api/orders/
- * @desc Registering order
+ * @desc Adding order
  * @access Public
  */
 router.post('/', async (req, res) => {
@@ -19,13 +19,13 @@ router.post('/', async (req, res) => {
     }
     let order = new Order(req.body);
     order = await order.save();
-    return res.status(200).json({ order, msg: 'Order successfully registered.' });
+    res.status(200).json({ order, msg: 'Order successfully registered.' });
 })
 
 /**
- * @route GET /api/orders/
+ * @route GET /api/orders/:id
  * @desc Showing order info
- * @access Private
+ * @access Public
  */
 router.get('/:id', async (req, res) => {
     Order.findById(req.params.id, (err, order) => {
@@ -40,7 +40,7 @@ router.get('/:id', async (req, res) => {
 
 /**
  * @route PUT /api/orders/:id
- * @desc Showing order info
+ * @desc Updating order info
  * @access Private
  */
 router.put('/:id', (req, res) => {
@@ -63,7 +63,7 @@ router.put('/:id', (req, res) => {
 /**
  * @route DELETE /api/orders/:id
  * @desc Deleting order from Database
- * @access Private
+ * @access Public
  */
 router.delete('/:id', (req, res) => {
     Order.findByIdAndDelete(req.params.id, (err, order) => {
