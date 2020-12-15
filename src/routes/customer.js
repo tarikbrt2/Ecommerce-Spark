@@ -21,22 +21,24 @@ router.post('/', (req, res) => {
     if (error) {
         res.status(404).json({ error: error.details[0].message });
     }
-    Customer.findOne({ email: req.body.email }).then(async (customer) => {
-        if (customer) {
-            res.status(404).json({ error: 'User with same e-mail address already exists.' });
-        } else {
-            let customer = {
-                name: req.body.name,
-                email: req.body.email,
-                password: bcrypt.hashSync(req.body.password, 10),
-                phone: req.body.phone,
-                birthDay: req.body.birthDay
+    else {
+        Customer.findOne({ email: req.body.email }).then(async (customer) => {
+            if (customer) {
+                res.status(404).json({ error: 'User with same e-mail address already exists.' });
+            } else {
+                let customer = {
+                    name: req.body.name,
+                    email: req.body.email,
+                    password: bcrypt.hashSync(req.body.password, 10),
+                    phone: req.body.phone,
+                    birthDay: req.body.birthDay
+                }
+                customer = new Customer(customer);
+                customer = await customer.save();
+                res.status(200).json({ customer, msg: 'Customer successfully registered.' });
             }
-            customer = new Customer(customer);
-            customer = await customer.save();
-            res.status(200).json({ customer, msg: 'Customer successfully registered.' });
-        }
-    })
+        })
+    }
 })
 
 /**

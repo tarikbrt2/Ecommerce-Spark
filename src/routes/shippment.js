@@ -17,9 +17,11 @@ router.post('/', async (req, res) => {
     if (error) {
         res.status(404).json({ error: error.details[0].message });
     }
-    let shippment = new Shippment(req.body);
-    shippment = await shippment.save();
-    res.status(200).json({ Shippment, msg: 'Shippment successfully registered.' });
+    else {
+        let shippment = new Shippment(req.body);
+        shippment = await shippment.save();
+        res.status(200).json({ Shippment, msg: 'Shippment successfully registered.' });
+    }
 })
 
 /**

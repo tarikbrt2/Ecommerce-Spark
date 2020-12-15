@@ -105,6 +105,25 @@ pre {
   cursor: pointer;
 }
 
+.product .card .flex {
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.product .card .flex a {
+  text-align: center;
+  width: 75px;
+  border: 1px solid #333;
+}
+
+.product .card .flex a:hover {
+  background-color: var(--primary-color);
+  border-color: #fff;
+  color: #fff;
+  transform: scale(1.1);
+  transition: 0.1s;
+}
+
 /* Tablets and under */
 @media (max-width: 768px) {
   .grid {
