@@ -4,11 +4,13 @@ import jwtDecode from 'jwt-decode';
 const state = {
     loggedIn: false,
     token: localStorage.getItem('token'),
+    profileInfo: '',
 };
 
 const getters = {
     getLoggedIn: (state) => state.loggedIn,
     getToken: (state) => state.token,
+    getProfileData: (state) => state.profileInfo,
 };
 
 const actions = {
@@ -29,19 +31,33 @@ const actions = {
     },
     register({ commit }, data) {
         axios.post('/api/customers', data)
-        .then((response) => {
-            commit('register', response.data);
-            console.log(response.data);
+            .then((response) => {
+                commit('register', response.data);
+                console.log(response.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    },
+    getProfileInfo({ commit }, token) {
+        axios.get('/api/customers/profile', {
+            headers: {
+                Authorization: token,
+            },
         })
-        .catch((err) => {
-            console.log(err);
-        });
+            .then((response) => {
+                commit('setProfileInfo', response.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     },
 };
 
 const mutations = {
     setToken(state, token) {
         state.loggedIn = true;
+        state.token = token;
         localStorage.setItem('token', token);
     },
     isLogged(state) {
@@ -74,6 +90,9 @@ const mutations = {
         state.token = '';
         state.loggedIn = false;
         localStorage.setItem('token', state.token);
+    },
+    setProfileInfo(state, data) {
+        state.profileInfo = data;
     },
 };
 

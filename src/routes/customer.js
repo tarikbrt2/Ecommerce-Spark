@@ -15,16 +15,20 @@ const { customerValidation } = require('../validation/validation');
  * @route POST /api/customers/
  * @desc Registering customer
  * @access Public
+ * @errors { 
+ * code: 1 - Error with database,
+ * code: 2 - User with same e-mail address already exists
+ * }
  */
 router.post('/', (req, res) => {
     const { error } = customerValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0].message });
+        res.status(404).json({ error: error.details[0].message, code: 1 });
     }
     else {
         Customer.findOne({ email: req.body.email }).then(async (customer) => {
             if (customer) {
-                res.status(404).json({ error: 'User with same e-mail address already exists.' });
+                res.status(404).json({ error: 'User with same e-mail address already exists.', code: 2 });
             } else {
                 let customer = {
                     name: req.body.name,
@@ -45,6 +49,10 @@ router.post('/', (req, res) => {
  * @route POST /api/customers/login
  * @desc Loging customer
  * @access Public
+ * @errors { 
+ * code: 1 - Wrong password,
+ * code: 2 - Already registered user with same e-mail
+ * }
  */
 router.post('/login', async (req, res) => {
     Customer.findOne({ email: req.body.email }).then(customer => {
@@ -63,12 +71,12 @@ router.post('/login', async (req, res) => {
                         res.status(200).json({ token: `Bearer ${token}`, msg: 'Sucessfully logged in.' });
                     });
                 } else {
-                    res.status(404).json({ error: "Wrong password, please try again." });
+                    res.status(404).json({ error: "Wrong password, please try again.", code: 1 });
                 }
             })
         }
         else {
-            res.status(404).json({ error: "Customer is not registered, please resgister." });
+            res.status(404).json({ error: "Customer is not registered, please resgister.", code: 2 });
         }
     })
 })
@@ -86,19 +94,23 @@ router.get('/profile', passport.authenticate('jwt', { session: false }), (req, r
  * @route GET /api/customers/:id
  * @desc Showing customer info
  * @access Private
+ * @errors { 
+ * code: 1 - Error with database,
+ * code: 2 - Forbbiden
+ * }
  */
 router.get('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
     if (req.user.role > 0) {
         Customer.findById(req.params.id, (err, customer) => {
             if (err) {
-                res.status(404).json({ error: err });
+                res.status(404).json({ error: err, code: 1 });
             }
             else {
-                res.status(404).json(customer);
+                res.status(200).json(customer);
             }
         });
     } else {
-        res.status(403).json({ error: 'Unauthorized' });
+        res.status(403).json({ error: 'Forbidden', code: 2 });
     }
 })
 
@@ -106,19 +118,23 @@ router.get('/:id', passport.authenticate('jwt', { session: false }), async (req,
  * @route GET /api/customers
  * @desc Showing all customers
  * @access Private
+ * @errors { 
+ * code: 1 - Error with database,
+ * code: 2 - Forbidden
+ * }
  */
 router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
     if (req.user.role > 0) {
         Customer.find((err, customers) => {
             if (err) {
-                res.status(404).json({ error: err });
+                res.status(404).json({ error: err , code: 1});
             }
             else {
                 res.status(200).json(customers);
             }
         });
     } else {
-        res.status(403).json({ error: 'Unauthorized' });
+        res.status(403).json({ error: 'Forbidden', code: 2 });
     }
 })
 
@@ -126,16 +142,20 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
  * @route PUT /api/customers/:id
  * @desc Updating customer info
  * @access Private
+ * @errors { 
+ * code: 1 - Error with database,
+ * code: 2 - Error with validation
+ * }
  */
 router.put('/:id', (req, res) => {
     const { error } = customerValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0] });
+        res.status(404).json({ error: error.details[0], code: 2 });
     }
     else {
         Customer.findByIdAndUpdate(req.params.id, req.body, (err, customer) => {
             if (err) {
-                res.status(404).json({ error: err });
+                res.status(404).json({ error: err, code: 1 });
             }
             else {
                 res.status(200).json({ customer, msg: 'Customer successfully updated.' });
@@ -148,11 +168,14 @@ router.put('/:id', (req, res) => {
  * @route DELETE /api/customers/:id
  * @desc Deleting customer from Database
  * @access Private
+ * @errors { 
+ * code: 1 - Error with database
+ * }
  */
 router.delete('/:id', (req, res) => {
     Customer.findByIdAndDelete(req.params.id, (err, customer) => {
         if (err) {
-            res.status(404).json({ error: 'Customer not found.' });
+            res.status(404).json({ error: 'Customer not found.', code: 1 });
         }
         else {
             res.status(200).json({ customer, msg: 'Customer successfully deleted.' });

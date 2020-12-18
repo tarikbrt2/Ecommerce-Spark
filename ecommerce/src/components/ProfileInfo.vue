@@ -11,10 +11,10 @@
                     src="https://www.buzzsneakers.com/files/thumbs/files/images/product/brand/adidas/thumbs_600/FW3639_600_600px.jpg"
                 />
                 <div class="flex">
-                    <h1>NAME: Tarik</h1>
-                    <h1>EMAIL: tarik@gmail.com</h1>
-                    <h1>BIRTHDAY: 24/09/2001</h1>
-                    <h1>PHONE: 123123123</h1>
+                    <h1>NAME: {{ getProfileData.name }}</h1>
+                    <h1>EMAIL: {{ getProfileData.email }}</h1>
+                    <h1>BIRTHDAY: {{ getProfileData.birthDay }}</h1>
+                    <h1>PHONE: {{ getProfileData.phone }}</h1>
                 </div>
             </div>
             <div class="profile-about">
@@ -34,12 +34,18 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
     name: 'ProfileInfo',
+    created() {
+        this.getProfileInfo(this.getToken);
+    },
     methods: {
-        ...mapActions(['logOut']),
+        ...mapActions(['logOut', 'getProfileInfo']),
+    },
+    computed: {
+        ...mapGetters(['getToken', 'getProfileData']),
     },
 };
 </script>
