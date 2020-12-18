@@ -67,6 +67,9 @@ router.post('/login', async (req, res) => {
                 }
             })
         }
+        else {
+            res.status(404).json({ error: "Customer is not registered, please resgister." });
+        }
     })
 })
 
@@ -84,15 +87,39 @@ router.get('/profile', passport.authenticate('jwt', { session: false }), (req, r
  * @desc Showing customer info
  * @access Private
  */
-router.get('/:id', async (req, res) => {
-    Customer.findById(req.params.id, (err, customer) => {
-        if (err) {
-            res.status(404).json({ error: err });
-        }
-        else {
-            res.status(404).json(customer);
-        }
-    });
+router.get('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    if (req.user.role > 0) {
+        Customer.findById(req.params.id, (err, customer) => {
+            if (err) {
+                res.status(404).json({ error: err });
+            }
+            else {
+                res.status(404).json(customer);
+            }
+        });
+    } else {
+        res.status(403).json({ error: 'Unauthorized' });
+    }
+})
+
+/**
+ * @route GET /api/customers
+ * @desc Showing all customers
+ * @access Private
+ */
+router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    if (req.user.role > 0) {
+        Customer.find((err, customers) => {
+            if (err) {
+                res.status(404).json({ error: err });
+            }
+            else {
+                res.status(200).json(customers);
+            }
+        });
+    } else {
+        res.status(403).json({ error: 'Unauthorized' });
+    }
 })
 
 /**
@@ -108,7 +135,7 @@ router.put('/:id', (req, res) => {
     else {
         Customer.findByIdAndUpdate(req.params.id, req.body, (err, customer) => {
             if (err) {
-                res.status(404).json({ error: 'Customer not found.' });
+                res.status(404).json({ error: err });
             }
             else {
                 res.status(200).json({ customer, msg: 'Customer successfully updated.' });

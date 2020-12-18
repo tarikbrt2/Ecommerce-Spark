@@ -14,14 +14,14 @@
   margin: 10px;
 }
 
-.btn {
-  display: inline-block;
-  padding: 10px 30px;
+.btn{
+  text-align: center;
+  width: 75px;
+  border: 1px solid #333;
   cursor: pointer;
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
-  border-radius: 5px;
+  outline: none;
+  color: #333;
+  background-color: #fff;
 }
 
 .btn-outline {

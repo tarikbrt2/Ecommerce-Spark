@@ -25,6 +25,22 @@ router.post('/', async (req, res) => {
 })
 
 /**
+ * @route GET /api/orders
+ * @desc Showing all orders
+ * @access Public
+ */
+router.get('/', async (req, res) => {
+    Order.find((err, orders) => {
+        if (err) {
+            res.status(404).json({ error: err });
+        }
+        else {
+            res.status(200).json(orders);
+        }
+    });
+})
+
+/**
  * @route GET /api/orders/:id
  * @desc Showing order info
  * @access Public

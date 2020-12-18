@@ -35,7 +35,23 @@ router.get('/:id', async (req, res) => {
             res.status(404).json({ error: err });
         }
         else {
-            res.status(404).json(shippment);
+            res.status(200).json(shippment);
+        }
+    });
+})
+
+/**
+ * @route GET /api/shippments
+ * @desc Showing all shippments
+ * @access Public
+ */
+router.get('/', async (req, res) => {
+    Shippment.find((err, shippments) => {
+        if (err) {
+            res.status(404).json({ error: err });
+        }
+        else {
+            res.status(200).json(shippments);
         }
     });
 })

@@ -25,21 +25,21 @@ router.post('/', async (req, res) => {
 })
 
 /**
- * @route GET /api/products/:id
- * @desc Showing product info
+ * @route GET /api/products/
+ * @desc Showing all products
  * @access Public
  */
 router.get('/', async (req, res) => {
     Product.find((err, products) => {
         if (err) {
-            res.status(404).json({ error: err });
+            res.status(400).json({ error: err });
         }
         else {
             if (products.length > 0) {
                 res.status(200).json(products);
             }
             else {
-                res.status(404).json({ error: "There is no products." });
+                res.status(400).json({ error: "There is no products." });
             }
         }
     });
@@ -53,7 +53,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     Product.findById(req.params.id, (err, product) => {
         if (err) {
-            res.status(404).json({ error: err });
+            res.status(400).json({ error: err });
         }
         else {
             res.status(200).json(product);
