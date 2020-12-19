@@ -8,7 +8,8 @@
     "front-install": "npm install --prefix ecommerce",
     "server": "nodemon src/index.js",
     "client": "npm run serve --prefix ecommerce",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "node src/index.js"
   },
   "keywords": [],
   "author": "",
