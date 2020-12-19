@@ -39,7 +39,7 @@ mongoose
       useUnifiedTopology: true,
     }
   )
-  .then(() => {
+  /* .then(() => {
     // Listening on provided port number if connection with the base is established
     app.listen(PORT, () => {
       if(process.env.NODE_ENV === 'development'){
@@ -48,7 +48,7 @@ mongoose
       }
     });
   }
-  )
+  ) */
   .catch(console.error);
 
 // Customers API route
@@ -74,4 +74,11 @@ app.use('/api/products', productsRouter);
 
 // Shippment routing middleware
 app.use('/api/shippments', shippmentRouter);
+
+module.exports = app.listen(PORT, () => {
+  if(process.env.NODE_ENV === 'development'){
+    console.log('Successfully connected to MongoDB.');
+    console.log('Listening on port: ', PORT);
+  }
+});
 

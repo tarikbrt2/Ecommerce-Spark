@@ -14,14 +14,8 @@ const getters = {
 };
 
 const actions = {
-    loginUser({ commit }, data) {
-        axios.post('/api/customers/login', data)
-            .then((response) => {
-                commit('setToken', response.data.token);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+    loginUser(_, data) {
+        return axios.post('/api/customers/login', data);
     },
     checkLogged({ commit }) {
         commit('isLogged');
@@ -29,15 +23,11 @@ const actions = {
     logOut({ commit }) {
         commit('logOut');
     },
-    register({ commit }, data) {
-        axios.post('/api/customers', data)
-            .then((response) => {
-                commit('register', response.data);
-                console.log(response.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+    register(_, data) {
+        return axios.post('/api/customers', data);
+    },
+    capitalizeFirstLetter(_, string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
     },
     getProfileInfo({ commit }, token) {
         axios.get('/api/customers/profile', {
@@ -45,12 +35,12 @@ const actions = {
                 Authorization: token,
             },
         })
-            .then((response) => {
-                commit('setProfileInfo', response.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        .then((response) => {
+            commit('setProfileInfo', response.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
     },
 };
 
@@ -73,7 +63,6 @@ const mutations = {
                     state.loggedIn = false;
                     state.token = '';
                     localStorage.setItem('token', state.token);
-                    console.log(err);
                 }
             } else {
                 state.loggedIn = false;
@@ -82,8 +71,6 @@ const mutations = {
             }
         } else {
             state.loggedIn = false;
-            state.token = '';
-            localStorage.setItem('token', state.token);
         }
     },
     logOut(state) {

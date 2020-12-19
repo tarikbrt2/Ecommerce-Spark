@@ -23,7 +23,7 @@
                     <div class="grid">
                         <div class="form-control">
                             <input
-                                @click.prevent="loginUser({ email, password })"
+                                @click.prevent="submit({ email, password })"
                                 class="btn"
                                 type="submit"
                                 value="LOGIN"
@@ -58,7 +58,37 @@ export default {
         };
     },
     methods: {
-        ...mapActions(['loginUser']),
+        ...mapActions(['loginUser', 'capitalizeFirstLetter']),
+        submit(data) {
+            this.loginUser(data)
+                .then((response) => {
+                    // Getting response from backend and commiting changes to Vuex state
+                    this.$store.commit('setToken', response.data.token);
+                    // Showing notification as user sucessfully logged in
+                    this.$toasted.show('Successfully logged in.', {
+                        duration: 3000,
+                        icon: 'check-circle',
+                    });
+                })
+                .catch(async (err) => {
+                    // Getting error from backend
+                    // If fields are empty,
+                    // notifying user that he/she should fullfill all the fields
+                    if (!this.email || !this.password) {
+                        this.$toasted.show('Please fill all the fields.', {
+                            duration: 3000,
+                            icon: 'exclamation-circle',
+                        });
+                    } else {
+                        // Otherwise displaying error to user
+                        const message = await this.capitalizeFirstLetter(err.response.data.error);
+                        this.$toasted.show(message, {
+                            duration: 3000,
+                            icon: 'exclamation-circle',
+                        });
+                    }
+                });
+        },
     },
 };
 </script>

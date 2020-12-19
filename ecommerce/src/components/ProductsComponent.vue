@@ -10,8 +10,10 @@
                         <p>Quantity: {{ product.quantity }}</p>
                     </div>
                     <div class="flex">
-                        <a @click.prevent="addToCart(product)" class="btn">BUY</a>
-                        <router-link class="btn" :to="{ path: '/product/' + product._id }"
+                        <a @click.prevent="submit(product)" class="btn">BUY</a>
+                        <router-link
+                            class="btn"
+                            :to="{ path: '/product/' + product._id }"
                             >INFO</router-link
                         >
                     </div>
@@ -31,6 +33,14 @@ export default {
     },
     methods: {
         ...mapActions(['fetchProducts', 'addToCart']),
+        submit(data) {
+            this.addToCart(data);
+            this.$toasted.show('You have sucessfully added this item to your cart.',
+            {
+                duration: 3000,
+                icon: 'check-circle',
+            });
+        },
     },
     computed: {
         ...mapGetters(['getProducts']),

@@ -1,5 +1,5 @@
 <template>
-    <div class="card-container">
+    <div v-if="getCart[0]" class="card-container">
         <div v-for="(item, index) in getCart" :key="index" class="cart">
             <div class="container flex">
                 <div class="cart-img">
@@ -25,6 +25,12 @@
                 </div>
             </div>
         </div>
+        <div class="checkout-button">
+            <button @click.prevent="$router.push('/checkout')" class="btn">CHECKOUT</button>
+        </div>
+    </div>
+    <div v-else class="container">
+        <h1> There is no items in your cart </h1>
     </div>
 </template>
 

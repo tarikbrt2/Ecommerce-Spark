@@ -48,7 +48,7 @@
                         <div class="form-control">
                             <input
                                 @click.prevent="
-                                    register({
+                                    submit({
                                         name,
                                         email,
                                         password,
@@ -84,7 +84,25 @@ export default {
         };
     },
     methods: {
-        ...mapActions(['register']),
+        ...mapActions(['register', 'capitalizeFirstLetter']),
+        submit(data) {
+            this.register(data)
+                .then(() => {
+                    this.$toasted.show('You have sucessfully registered your customer account.', {
+                        duration: 3000,
+                        icon: 'check-circle',
+                    });
+                    this.$router.push('/');
+                })
+                .catch((err) => {
+                    let message = err.response.data.error;
+                    message = this.capitalizeFirstLetter(message.replace(/[^a-zA-Z ]/g, ''));
+                    this.$toasted.show(message, {
+                        duration: 3000,
+                        icon: 'exclamation-circle',
+                    });
+                });
+        },
     },
 };
 </script>

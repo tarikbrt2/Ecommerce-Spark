@@ -14,6 +14,9 @@ const getters = {
 };
 
 const actions = {
+    checkout(_, data) {
+        return axios.post('/api/orders', data);
+    },
     getProductInfo({ commit }, id) {
         axios.get(`/api/products/${id}`)
             .then((response) => {
@@ -54,6 +57,9 @@ const actions = {
             img: product.img,
         };
         commit('setCart', item);
+        return new Promise((resolve) => {
+            resolve({ msg: 'You have successfully added item to your cart.' });
+        });
     },
     addQuantity({ commit }, data) {
         commit('setQuantity', data);
@@ -87,6 +93,10 @@ const mutations = {
             }
             localStorage.setItem('cart', JSON.stringify(state.cart));
         }
+    },
+    removeCart: (state) => {
+        state.cart = [];
+        localStorage.removeItem('cart');
     },
 };
 

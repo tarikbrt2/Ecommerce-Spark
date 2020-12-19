@@ -16,7 +16,7 @@ const { customerValidation } = require('../validation/validation');
  * @desc Registering customer
  * @access Public
  * @errors { 
- * code: 1 - Error with database,
+ * code: 1 - Error with validation,
  * code: 2 - User with same e-mail address already exists
  * }
  */
