@@ -7,7 +7,7 @@ module.exports = passport => {
     passport.use(
         new jwtStrategy({
             jwtFromRequest: extractJWT.fromAuthHeaderAsBearerToken(),
-            secretOrKey: process.env.SECRET
+            secretOrKey: process.env.SECRET || "secret",
         }, (payload, done) => {
             Customer.findById(payload.id).then(customer => {
                 if(customer) return done(null, customer);
