@@ -20,13 +20,7 @@ app.use(passport.initialize());
 // Establishing JWT passport strategy
 jwtStrategy(passport);
 
-const PORT = process.env.PORT || 3000;
-
-// Including models
-const { Customer, Order, Shippment, Product } = require('./models/models');
-
-// Including validation
-const { customerValidation, orderValidation, shippmentValidation, productValidation } = require('./validation/validation');
+const PORT = process.env.PORT || 8000;
 
 // Connection to DB 
 mongoose
@@ -39,16 +33,15 @@ mongoose
       useUnifiedTopology: true,
     }
   )
-  /* .then(() => {
+  .then(() => {
     // Listening on provided port number if connection with the base is established
-    app.listen(PORT, () => {
-      if(process.env.NODE_ENV === 'development'){
+    if (process.env.NODE_ENV === 'production') {
+      app.listen(PORT, () => {
         console.log('Successfully connected to MongoDB.');
         console.log('Listening on port: ', PORT);
-      }
-    });
-  }
-  ) */
+      });
+    }
+  })
   .catch(console.error);
 
 // Customers API route
@@ -75,10 +68,18 @@ app.use('/api/products', productsRouter);
 // Shippment routing middleware
 app.use('/api/shippments', shippmentRouter);
 
-module.exports = app.listen(PORT, () => {
-  if(process.env.NODE_ENV === 'development'){
-    console.log('Successfully connected to MongoDB.');
-    console.log('Listening on port: ', PORT);
-  }
-});
+// Using express static folder
+if (process.env.NODE_ENV === 'production') {
+  // Setting public folder for production
+  app.use(express.static(process.cwd() + '/public/'));
+
+  //Handling VUE 
+  app.get(/.*/, (req, res) => {
+    res.sendFile(process.cwd() + '/public/index.html');
+  })
+}
+
+if (process.env.NODE_ENV === 'development') {
+  module.exports = app.listen(PORT, () => { console.log('Listening on PORT:', PORT) });
+}
 

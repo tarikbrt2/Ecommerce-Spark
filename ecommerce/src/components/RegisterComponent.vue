@@ -94,9 +94,9 @@ export default {
                     });
                     this.$router.push('/');
                 })
-                .catch((err) => {
+                .catch(async (err) => {
                     let message = err.response.data.error;
-                    message = this.capitalizeFirstLetter(message.replace(/[^a-zA-Z ]/g, ''));
+                    message = await this.capitalizeFirstLetter(message.replace(/[^a-zA-Z ]/g, ''));
                     this.$toasted.show(message, {
                         duration: 3000,
                         icon: 'exclamation-circle',
