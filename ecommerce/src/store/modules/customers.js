@@ -5,12 +5,14 @@ const state = {
     loggedIn: false,
     token: localStorage.getItem('token'),
     profileInfo: '',
+    admin: false,
 };
 
 const getters = {
     getLoggedIn: (state) => state.loggedIn,
     getToken: (state) => state.token,
     getProfileData: (state) => state.profileInfo,
+    getAdmin: (state) => state.admin,
 };
 
 const actions = {
@@ -42,9 +44,31 @@ const actions = {
             console.log(err);
         });
     },
+    isAdmin({ commit }) {
+        commit('checkAdmin');
+    },
 };
 
 const mutations = {
+    checkAdmin(state) {
+        if (state.token) {
+            const token = state.token.split(' ');
+            if (token) {
+                try {
+                    const payload = jwtDecode(token[1]);
+                    if (payload.role > 0) {
+                        state.admin = true;
+                    }
+                } catch (err) {
+                    state.admin = false;
+                }
+            } else {
+                state.admin = false;
+            }
+        } else {
+            state.admin = false;
+        }
+    },
     setToken(state, token) {
         state.loggedIn = true;
         state.token = token;
