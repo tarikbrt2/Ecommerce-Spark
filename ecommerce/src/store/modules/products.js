@@ -64,6 +64,12 @@ const actions = {
     addQuantity({ commit }, data) {
         commit('setQuantity', data);
     },
+    addItem(_, data) {
+        return axios.post('/api/products', data);
+    },
+    uploadImage(_, data) {
+        return axios.post('/api/uploads/', data);
+    },
 };
 
 const mutations = {

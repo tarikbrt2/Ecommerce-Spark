@@ -77,6 +77,7 @@ app.use('/api/uploads', uploadsRouter);
 
 // Setting public folder for production
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../images')));
 
 // Using express static folder
 if (process.env.NODE_ENV === 'production') {

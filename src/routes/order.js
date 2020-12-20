@@ -11,6 +11,9 @@ const { orderValidation } = require('../validation/validation');
  * @route POST /api/orders/
  * @desc Adding order
  * @access Public
+ * @errors {
+ * Code: 3 - Error with validation,
+ * }
  */
 router.post('/', async (req, res) => {
     const { error } = orderValidation(req.body);
@@ -28,6 +31,9 @@ router.post('/', async (req, res) => {
  * @route GET /api/orders
  * @desc Showing all orders
  * @access Public
+ * @errors {
+ * Code: 1 - Error with database,
+ * }
  */
 router.get('/', async (req, res) => {
     Order.find((err, orders) => {
@@ -44,6 +50,9 @@ router.get('/', async (req, res) => {
  * @route GET /api/orders/:id
  * @desc Showing order info
  * @access Public
+ * @errors {
+ *  Code: 1 - Error with database,
+ * }
  */
 router.get('/:id', async (req, res) => {
     Order.findById(req.params.id, (err, order) => {
@@ -60,6 +69,10 @@ router.get('/:id', async (req, res) => {
  * @route PUT /api/orders/:id
  * @desc Updating order info
  * @access Private
+ * @errors {
+ * Code: 1 - Error with database,
+ * Code: 3 - Error with validation,
+ * }
  */
 router.put('/:id', (req, res) => {
     const { error } = orderValidation(req.body);
@@ -82,6 +95,9 @@ router.put('/:id', (req, res) => {
  * @route DELETE /api/orders/:id
  * @desc Deleting order from Database
  * @access Public
+ * @errors {
+ *  Code: 1 - Error with database,
+ * }
  */
 router.delete('/:id', (req, res) => {
     Order.findByIdAndDelete(req.params.id, (err, order) => {

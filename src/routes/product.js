@@ -11,6 +11,9 @@ const { productValidation } = require('../validation/validation');
  * @route POST /api/products/
  * @desc Adding product
  * @access Private
+ * @erros {
+ *  Code: 3 - Error with validation,
+ * }
  */
 router.post('/', async (req, res) => {
     const { error } = productValidation(req.body);
@@ -28,6 +31,10 @@ router.post('/', async (req, res) => {
  * @route GET /api/products/
  * @desc Showing all products
  * @access Public
+ * @errors {
+ *  Code: 1 - Error with database,
+ *  Code: 2 - No products
+ * }
  */
 router.get('/', async (req, res) => {
     Product.find((err, products) => {
@@ -47,6 +54,9 @@ router.get('/', async (req, res) => {
  * @route GET /api/products/:id
  * @desc Showing product info
  * @access Public
+ * @errors {
+ *  Code: 1 - Error with database,
+ * }
  */
 router.get('/:id', async (req, res) => {
     Product.findById(req.params.id, (err, product) => {
@@ -63,6 +73,10 @@ router.get('/:id', async (req, res) => {
  * @route PUT /api/products/:id
  * @desc Updating product info
  * @access Private
+ * @errors {
+ *  Code: 1 - Error with database,
+ *  Code: 3 - Error with validation,
+ * }
  */
 router.put('/:id', (req, res) => {
     const { error } = productValidation(req.body);
@@ -83,6 +97,9 @@ router.put('/:id', (req, res) => {
  * @route DELETE /api/products/:id
  * @desc Deleting product from Database
  * @access Private
+ * @errors {
+ *  Code: 1 - Error with database,
+ * }
  */
 router.delete('/:id', (req, res) => {
     Product.findByIdAndDelete(req.params.id, (err, product) => {

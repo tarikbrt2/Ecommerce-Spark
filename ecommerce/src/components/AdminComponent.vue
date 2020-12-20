@@ -46,7 +46,7 @@
                     </div>
                     <div class="form-control">
                         <input
-                            @click.prevent="addItem"
+                            @click.prevent="submit"
                             class="btn"
                             type="submit"
                             value="ADD ARTICLE"
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mapActions } from 'vuex';
 
 export default {
     name: 'AdminComponent',
@@ -75,22 +75,27 @@ export default {
         };
     },
     methods: {
+        ...mapActions(['addItem', 'uploadImage']),
         onFileSelected(event) {
             this.selectedFile = event.target.files[0];
             const fd = new FormData();
             fd.append('img', this.selectedFile, this.selectedFile.name);
-            axios.post('/api/uploads/', fd)
+            this.uploadImage(fd)
             .then((response) => {
                 this.img = `/${response.data.filename}`;
             })
             .catch((err) => {
-                this.$toasted.show(err.response.data.error, {
+                this.selectedFile = null;
+                this.$toasted.show('Please select image files only.', {
                     duration: 3000,
                     icon: 'exclamation-circle',
                 });
+                if (process.env.NODE_ENV === 'development') {
+                    console.log(err);
+                }
             });
         },
-        addItem() {
+        submit() {
             const payload = {
                 name: this.name,
                 description: this.description,
@@ -99,9 +104,13 @@ export default {
                 quantity: this.quantity,
                 img: this.img,
             };
-            axios.post('/api/products', payload)
+            this.addItem(payload)
             .then((response) => {
-                console.log(response);
+                this.$router.push('/');
+                this.$toasted.show(response.data.msg, {
+                    duration: 3000,
+                    icon: 'exclamation-circle',
+                });
             })
             .catch((err) => {
                 this.$toasted.show(err.response.data.error, {
