@@ -83,7 +83,7 @@ app.use(express.static(path.join(__dirname, '../images')));
 if (process.env.NODE_ENV === 'production') {
   //Handling images
   app.get('/images/:img', (req, res) => {
-    return res.sendFile(process.cwd() + '/imagies/' + req.params.img);
+    return res.sendFile(process.cwd() + '/images/' + req.params.img);
   })
 
   //Handling VUE 
