@@ -81,9 +81,14 @@ app.use(express.static(path.join(__dirname, '../images')));
 
 // Using express static folder
 if (process.env.NODE_ENV === 'production') {
+  //Handling images
+  app.get('/images/:img', (req, res) => {
+    return res.sendFile(process.cwd() + '/imagies/' + req.params.img);
+  })
+
   //Handling VUE 
   app.get(/.*/, (req, res) => {
-    res.sendFile(process.cwd() + '/public/index.html');
+    return res.sendFile(process.cwd() + '/public/index.html');
   })
 }
 
