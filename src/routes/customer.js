@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 
-const router = express.Router()
+const router = express.Router();
 
 // Including customer model
 const { Customer } = require('../models/models');

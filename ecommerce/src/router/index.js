@@ -6,6 +6,7 @@ import Cart from '../views/Cart.vue';
 import Profile from '../views/Profile.vue';
 import Register from '../views/Register.vue';
 import Checkout from '../views/Checkout.vue';
+import Admin from '../views/Admin.vue';
 
 Vue.use(VueRouter);
 
@@ -34,6 +35,11 @@ const routes = [
     path: '/checkout',
     name: 'Checkout',
     component: Checkout,
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin,
   },
   {
     path: '/product/:id',

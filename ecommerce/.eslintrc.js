@@ -17,5 +17,6 @@ module.exports = {
     'indent': 'off',
     'no-shadow': 'off',
     'no-underscore-dangle': 'off',
+    'prefer-destructuring': 'off',
   },
 };
