@@ -81,7 +81,7 @@ export default {
             fd.append('img', this.selectedFile, this.selectedFile.name);
             axios.post('/api/uploads/', fd)
             .then((response) => {
-                this.img = `//localhost:3000/${response.data.filename}`;
+                this.img = `/${response.data.filename}`;
             })
             .catch((err) => {
                 this.$toasted.show(err.response.data.error, {
