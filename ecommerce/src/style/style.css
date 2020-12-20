@@ -103,6 +103,7 @@ pre {
 
 .product .card img {
   flex: 6;
+  max-height: 246px;
 }
 
 .product-desc {
