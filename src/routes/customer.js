@@ -16,14 +16,14 @@ const { customerValidation } = require('../validation/validation');
  * @desc Registering customer
  * @access Public
  * @errors { 
- * code: 1 - Error with validation,
- * code: 2 - User with same e-mail address already exists
+ * code: 2 - User with same e-mail address already exists,
+ * code: 3 - Error with validation
  * }
  */
 router.post('/', (req, res) => {
     const { error } = customerValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0].message, code: 1 });
+        res.status(404).json({ error: error.details[0].message, code: 3 });
     }
     else {
         Customer.findOne({ email: req.body.email }).then(async (customer) => {
@@ -144,13 +144,13 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
  * @access Private
  * @errors { 
  * code: 1 - Error with database,
- * code: 2 - Error with validation
+ * code: 3 - Error with validation
  * }
  */
 router.put('/:id', (req, res) => {
     const { error } = customerValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0], code: 2 });
+        res.status(404).json({ error: error.details[0], code: 3 });
     }
     else {
         Customer.findByIdAndUpdate(req.params.id, req.body, (err, customer) => {

@@ -15,7 +15,7 @@ const { shippmentValidation } = require('../validation/validation');
 router.post('/', async (req, res) => {
     const { error } = shippmentValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0].message });
+        res.status(404).json({ error: error.details[0].message, code: 3 });
     }
     else {
         let shippment = new Shippment(req.body);
@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     Shippment.findById(req.params.id, (err, shippment) => {
         if (err) {
-            res.status(404).json({ error: err });
+            res.status(404).json({ error: err, code: 1 });
         }
         else {
             res.status(200).json(shippment);
@@ -48,7 +48,7 @@ router.get('/:id', async (req, res) => {
 router.get('/', async (req, res) => {
     Shippment.find((err, shippments) => {
         if (err) {
-            res.status(404).json({ error: err });
+            res.status(404).json({ error: err, code: 1 });
         }
         else {
             res.status(200).json(shippments);
@@ -64,12 +64,12 @@ router.get('/', async (req, res) => {
 router.put('/:id', (req, res) => {
     const { error } = shippmentValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0] });
+        res.status(404).json({ error: error.details[0], code: 3 });
     }
     else {
         Shippment.findByIdAndUpdate(req.params.id, { $set: { senderAddress: req.body.senderAddress, deliveryAddress: req.body.deliveryAddress, deliveredAt: req.body.deliveredAt } }, (err, shippment) => {
             if (err) {
-                res.status(404).json({ error: 'Shippment not found.' });
+                res.status(404).json({ error: 'Shippment not found.', code: 1 });
             }
             else {
                 res.status(200).json({ shippment, msg: 'Shippment successfully updated.' });
@@ -86,7 +86,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     Shippment.findByIdAndDelete(req.params.id, (err, shippment) => {
         if (err) {
-            res.status(404).json({ error: 'Shippment not found.' });
+            res.status(404).json({ error: 'Shippment not found.', code: 1 });
         }
         else {
             res.status(200).json({ shippment, msg: 'Shippment successfully deleted.' });
