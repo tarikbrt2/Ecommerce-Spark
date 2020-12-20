@@ -82,7 +82,7 @@ export default {
             fd.append('img', this.selectedFile, this.selectedFile.name);
             this.uploadImage(fd)
             .then((response) => {
-                this.img = `/${response.data.filename}`;
+                this.img = `/images/${response.data.filename}`;
             })
             .catch((err) => {
                 this.selectedFile = null;
