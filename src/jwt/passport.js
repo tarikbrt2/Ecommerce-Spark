@@ -13,7 +13,9 @@ module.exports = passport => {
                 if(customer) return done(null, customer);
                 return done(null, false);
             }).catch(err => {
-                console.log(err);
+                if (proccess.env.NODE_ENV === 'development') {
+                    console.log(err);
+                }
             })
         })
     )

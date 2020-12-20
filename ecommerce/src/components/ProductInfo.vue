@@ -3,7 +3,9 @@
         <div class="container flex">
             <div class="product-img">
                 <img :src="getProduct.img" />
-                <button @click.prevent="submit(getProduct)" class="btn">ADD TO CART</button>
+                <button @click.prevent="submit(getProduct)" class="btn">
+                    ADD TO CART
+                </button>
             </div>
             <div class="flex">
                 <div class="product-title">
@@ -34,11 +36,11 @@ export default {
     methods: {
         ...mapActions(['getProductInfo', 'addToCart']),
         submit(data) {
-            this.addToCart(data);
-            this.$toasted.show('You have sucessfully added this item to your cart.',
-            {
-                duration: 3000,
-                icon: 'check-circle',
+            this.addToCart(data).then(() => {
+                this.$toasted.show('You have sucessfully added this item to your cart.', {
+                    duration: 3000,
+                    icon: 'check-circle',
+                });
             });
         },
     },

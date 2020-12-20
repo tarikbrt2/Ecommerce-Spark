@@ -15,7 +15,7 @@ const { orderValidation } = require('../validation/validation');
 router.post('/', async (req, res) => {
     const { error } = orderValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0].message });
+        res.status(404).json({ error: error.details[0].message, code: 3 });
     }
     else {
         let order = new Order(req.body);
@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
     Order.find((err, orders) => {
         if (err) {
-            res.status(404).json({ error: err });
+            res.status(404).json({ error: err, code: 1 });
         }
         else {
             res.status(200).json(orders);
@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     Order.findById(req.params.id, (err, order) => {
         if (err) {
-            res.status(404).json({ error: err });
+            res.status(404).json({ error: err, code: 1 });
         }
         else {
             res.status(404).json(order);
@@ -64,12 +64,12 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', (req, res) => {
     const { error } = orderValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0] });
+        res.status(404).json({ error: error.details[0], code: 3 });
     }
     else {
         Order.findByIdAndUpdate(req.params.id, { $set : { cost: req.body.cost, deliveryAddress: req.body.deliveryAddress } }, (err, order) => {
             if (err) {
-                res.status(404).json({ error: 'Order not found.' });
+                res.status(404).json({ error: 'Order not found.', code: 1 });
             }
             else {
                 res.status(200).json({ order, msg: 'Order successfully updated.' });
@@ -86,7 +86,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     Order.findByIdAndDelete(req.params.id, (err, order) => {
         if (err) {
-            res.status(404).json({ error: 'Order not found.' });
+            res.status(404).json({ error: 'Order not found.', code: 1 });
         }
         else {
             res.status(200).json({ order, msg: 'Order successfully deleted.' });

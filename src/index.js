@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const dotenv = require('dotenv');
 const passport = require('passport');
+const path = require('path');
 
 // Including JWT passport strategy
 const jwtStrategy = require('./jwt/passport');
@@ -20,7 +21,7 @@ app.use(passport.initialize());
 // Establishing JWT passport strategy
 jwtStrategy(passport);
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 3000;
 
 // Connection to DB 
 mongoose
@@ -56,6 +57,9 @@ const productsRouter = require('./routes/product');
 // Shippment API route
 const shippmentRouter = require('./routes/shippment');
 
+// Uploads API route
+const uploadsRouter = require('./routes/uploads');
+
 // Customers routing middleware
 app.use('/api/customers', customersRouter);
 
@@ -68,11 +72,14 @@ app.use('/api/products', productsRouter);
 // Shippment routing middleware
 app.use('/api/shippments', shippmentRouter);
 
+// Uploads routing middleware
+app.use('/api/uploads', uploadsRouter);
+
+// Setting public folder for production
+app.use(express.static(path.join(__dirname, '../public')));
+
 // Using express static folder
 if (process.env.NODE_ENV === 'production') {
-  // Setting public folder for production
-  app.use(express.static(process.cwd() + '/public/'));
-
   //Handling VUE 
   app.get(/.*/, (req, res) => {
     res.sendFile(process.cwd() + '/public/index.html');

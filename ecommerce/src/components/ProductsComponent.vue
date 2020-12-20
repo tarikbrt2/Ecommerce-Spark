@@ -5,11 +5,11 @@
                 <div class="card">
                     <img :src="product.img" />
                     <h1>{{ product.name }}</h1>
-                    <div class="flex">
+                    <div class="product-desc">
                         <p>${{ product.price }}</p>
                         <p>Quantity: {{ product.quantity }}</p>
                     </div>
-                    <div class="flex">
+                    <div class="product-btns">
                         <a @click.prevent="submit(product)" class="btn">BUY</a>
                         <router-link
                             class="btn"
