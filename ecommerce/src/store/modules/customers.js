@@ -51,21 +51,13 @@ const actions = {
 
 const mutations = {
     checkAdmin(state) {
-        if (state.token) {
-            const token = state.token.split(' ');
-            if (token) {
-                try {
-                    const payload = jwtDecode(token[1]);
-                    if (payload.role > 0) {
-                        state.admin = true;
-                    }
-                } catch (err) {
-                    state.admin = false;
-                }
-            } else {
-                state.admin = false;
+        const token = state.token.split(' ');
+        try {
+            const payload = jwtDecode(token[1]);
+            if (payload.role > 0) {
+                state.admin = true;
             }
-        } else {
+        } catch (err) {
             state.admin = false;
         }
     },
@@ -75,26 +67,16 @@ const mutations = {
         localStorage.setItem('token', token);
     },
     isLogged(state) {
-        if (state.token) {
-            const token = state.token.split(' ');
-            if (token) {
-                try {
-                    const payload = jwtDecode(token[1]);
-                    if (payload.id) {
-                        state.loggedIn = true;
-                    }
-                } catch (err) {
-                    state.loggedIn = false;
-                    state.token = '';
-                    localStorage.setItem('token', state.token);
-                }
-            } else {
-                state.loggedIn = false;
-                state.token = '';
-                localStorage.setItem('token', state.token);
+        const token = state.token.split(' ');
+        try {
+            const payload = jwtDecode(token[1]);
+            if (payload.id) {
+                state.loggedIn = true;
             }
-        } else {
+        } catch (err) {
             state.loggedIn = false;
+            state.token = '';
+            localStorage.setItem('token', state.token);
         }
     },
     logOut(state) {
