@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "front-install": "npm install --prefix ecommerce",
+    "client-build": "npm run build --prefix ecommerce",
     "server": "nodemon src/index.js",
     "client": "npm run serve --prefix ecommerce",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
