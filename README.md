@@ -128,14 +128,14 @@ Project Link: [https://github.com/tarikbrt2/Ecommerce-Spark](https://github.com/
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/tarikbrt2/Ecommerce-Spark.svg?style=for-the-badge
 [contributors-url]: https://github.com/tarikbrt2/Ecommerce-Spark/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/tarikbrt2/Ecommerce-Spark.svg?style=for-the-badge
 [forks-url]: https://github.com/tarikbrt2/Ecommerce-Spark/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/tarikbrt2/Ecommerce-Spark.svg?style=for-the-badge
 [stars-url]: https://github.com/tarikbrt2/Ecommerce-Spark/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/tarikbrt2/Ecommerce-Spark.svg?style=for-the-badge
 [issues-url]: https://github.com/tarikbrt2/Ecommerce-Spark/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/tarikbrt2/Ecommerce-Spark.svg?style=for-the-badge
 [license-url]: https://github.com/tarikbrt2/Ecommerce-Spark/blob/master/LICENSE.txt
 [product-screenshot]: images/image.png
