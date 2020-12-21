@@ -79,7 +79,7 @@ Before cloning project make sure to install VUE Cli.
 ### Unit testing
 
 After running unit testing, please make sure to change e-mail for unregistered account and number of registered accounts.
-After every single test new account will be registered and there will be plus one customer account.
+After every single test, new account will be registered and there will be plus one customer account.
 To run unit testing on backend API, please navigate to root folder and run following command:
 * npm
   ```sh
