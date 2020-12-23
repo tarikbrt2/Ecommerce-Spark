@@ -1,5 +1,5 @@
 const express = require('express');
-const { VALIDATION_ERROR, DATABSE_ERROR, EMPTY_COLLECTION } = require('../responses/errors');
+const { VALIDATION_ERROR, DATABASE_ERROR, EMPTY_COLLECTION } = require('../responses/errors');
 
 const router = express.Router()
 
@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
             res.status(400).json(EMPTY_COLLECTION);
         }
     } catch (err) {
-        res.status(400).json(DATABSE_ERROR);
+        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
     }
 })
 
@@ -71,7 +71,7 @@ router.get('/:id', async (req, res) => {
         };
         res.status(200).json(payload);
     } catch (err) {
-        res.status(400).json(DATABSE_ERROR);
+        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
     }
 })
 
@@ -97,7 +97,7 @@ router.put('/:id', async (req, res) => {
         };
         res.status(200).json({ product: payload, msg: 'Product successfully updated.' });
     } catch (err) {
-        res.status(400).json(DATABSE_ERROR);
+        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
     }
 })
 
@@ -119,7 +119,7 @@ router.delete('/:id', async (req, res) => {
         };
         res.status(200).json({ product: payload, msg: 'Product successfully deleted.' });
     } catch (err) {
-        res.status(400).json(DATABSE_ERROR);
+        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
     }
 })
 

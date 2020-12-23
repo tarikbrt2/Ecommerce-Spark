@@ -2,7 +2,7 @@ const express = require('express')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
-const { VALIDATION_ERROR, DATABSE_ERROR, EXISTING_USER, INCORRECT_PASSWORD, NOT_EXISTING_CUSTOMER, ACCESS_DENIED } = require('../responses/errors');
+const { VALIDATION_ERROR, DATABASE_ERROR, EXISTING_USER, NOT_EXISTING_CUSTOMER, ACCESS_DENIED, INVALID_CREDENTIALS } = require('../responses/errors');
 
 const router = express.Router();
 
@@ -57,23 +57,22 @@ router.post('/', (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const customer = await Customer.findOne({ email: req.body.email });
-        bcrypt.compare(req.body.password, customer.password).then(valid => {
-            if (valid) {
-                const payload = {
-                    id: customer._id,
-                    name: customer.name,
-                    email: customer.email,
-                    phone: customer.phone,
-                    birthDay: customer.birthDay,
-                    role: customer.role
-                }
-                jwt.sign(payload, process.env.SECRET, (err, token) => {
-                    res.status(200).json({ token: `Bearer ${token}`, msg: 'Sucessfully logged in.' });
-                });
-            } else {
-                res.status(400).json(INCORRECT_PASSWORD);
+        const valid = await bcrypt.compare(req.body.password, customer.password); 
+        if (valid) {
+            const payload = {
+                id: customer._id,
+                name: customer.name,
+                email: customer.email,
+                phone: customer.phone,
+                birthDay: customer.birthDay,
+                role: customer.role
             }
-        })
+            jwt.sign(payload, process.env.SECRET, (err, token) => {
+                res.status(200).json({ token: `Bearer ${token}`, msg: 'Sucessfully logged in.' });
+            });
+        } else {
+            res.status(401).json(INVALID_CREDENTIALS);
+        }
     }
     catch(err) {
         res.status(404).json(NOT_EXISTING_CUSTOMER);
@@ -101,10 +100,10 @@ router.get('/:id', passport.authenticate('jwt', { session: false }), async (req,
             res.status(200).json(customer);
         } 
         catch(err) {
-            res.status(400).json(DATABSE_ERROR);
+            res.status(400).json({ error: err, code: DATABASE_ERROR.code });
         }
     } else {
-        res.status(403).json(ACCESS_DENIED);
+        res.status(401).json(ACCESS_DENIED);
     }
 })
 
@@ -120,10 +119,10 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
             res.status(200).json(customers); 
         }
         catch(err) {
-            res.status(400).json(DATABSE_ERROR);
+            res.status(400).json({ error: err, code: DATABASE_ERROR.code });
         }
     } else {
-        res.status(403).json(ACCESS_DENIED);
+        res.status(401).json(ACCESS_DENIED);
     }
 })
 
@@ -150,7 +149,7 @@ router.put('/:id', async (req, res) => {
             res.status(200).json({ customer: payload, msg: 'Customer successfully updated.' });
         }
         catch(err) {
-            res.status(400).json(DATABSE_ERROR);
+            res.status(400).json({ error: err, code: DATABASE_ERROR.code });
         }
     }
 })
@@ -166,7 +165,7 @@ router.delete('/:id', async (req, res) => {
         res.status(200).json({ customer, msg: 'Customer successfully deleted.' });
     }
     catch(err) {
-        res.status(400).json(DATABSE_ERROR);
+        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
     }
 })
 
