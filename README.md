@@ -75,10 +75,10 @@ Before cloning project make sure to install VUE Cli.
    ```JS
    SECRET=yoursecret;
    ```
- 3. Run server and client side simultaneously
- ```sh
- npm run dev
- ```
+3. Run server and client side simultaneously
+   ```sh
+   npm run dev
+   ```
 
 ### Unit testing
 
