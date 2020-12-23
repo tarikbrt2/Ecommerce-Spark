@@ -11,22 +11,22 @@ module.exports = {
         message: 'Error with validation.'
     },
     EXISTING_USER: {
-        code: 400002,
+        code: 400003,
         message: 'User with same e-mail address already exists.',
     },
     ACCESS_DENIED: {
-        code: 401003,
+        code: 401004,
         message: 'Access denied.',
     },
     EMPTY_COLLECTION: {
-        code: 500004,
+        code: 500002,
         message: 'Collection is empty.',
     },
     MULTER_ERROR: {
-        code: 500005,
+        code: 500003,
     },
     NOT_EXISTING_CUSTOMER: {
-        code: 404004,
+        code: 404005,
         message: 'Customer with this e-mail address doesn\'t exist.',
     },
 };
