@@ -2,6 +2,7 @@ const express = require('express')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
+const { VALIDATION_ERROR, DATABSE_ERROR, EXISTING_USER, INCORRECT_PASSWORD, NOT_EXISTING_CUSTOMER, ACCESS_DENIED } = require('../responses/errors');
 
 const router = express.Router();
 
@@ -15,20 +16,16 @@ const { customerValidation } = require('../validation/validation');
  * @route POST /api/customers/
  * @desc Registering customer
  * @access Public
- * @errors { 
- * code: 2 - User with same e-mail address already exists,
- * code: 3 - Error with validation
- * }
  */
 router.post('/', (req, res) => {
     const { error } = customerValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0].message, code: 3 });
+        res.status(400).json({ error: error.details[0].message, code: VALIDATION_ERROR.code });
     }
     else {
         Customer.findOne({ email: req.body.email }).then(async (customer) => {
             if (customer) {
-                res.status(404).json({ error: 'User with same e-mail address already exists.', code: 2 });
+                res.status(400).json(EXISTING_USER);
             } else {
                 let customer = {
                     name: req.body.name,
@@ -39,7 +36,14 @@ router.post('/', (req, res) => {
                 }
                 customer = new Customer(customer);
                 customer = await customer.save();
-                res.status(200).json({ customer, msg: 'Customer successfully registered.' });
+                const payload = {
+                    name: customer.name,
+                    email: customer.email,
+                    password: customer.password,
+                    phone: customer.phone,
+                    birthDay: customer.birthDay,
+                };
+                res.status(200).json({ customer: payload, msg: 'Customer successfully registered.' });
             }
         })
     }
@@ -49,36 +53,31 @@ router.post('/', (req, res) => {
  * @route POST /api/customers/login
  * @desc Loging customer
  * @access Public
- * @errors { 
- * code: 1 - Wrong password,
- * code: 2 - Already registered user with same e-mail
- * }
  */
 router.post('/login', async (req, res) => {
-    Customer.findOne({ email: req.body.email }).then(customer => {
-        if (customer) {
-            bcrypt.compare(req.body.password, customer.password).then(valid => {
-                if (valid) {
-                    const payload = {
-                        id: customer._id,
-                        name: customer.name,
-                        email: customer.email,
-                        phone: customer.phone,
-                        birthDay: customer.birthDay,
-                        role: customer.role
-                    }
-                    jwt.sign(payload, process.env.SECRET, (err, token) => {
-                        res.status(200).json({ token: `Bearer ${token}`, msg: 'Sucessfully logged in.' });
-                    });
-                } else {
-                    res.status(404).json({ error: "Wrong password, please try again.", code: 1 });
+    try {
+        const customer = await Customer.findOne({ email: req.body.email });
+        bcrypt.compare(req.body.password, customer.password).then(valid => {
+            if (valid) {
+                const payload = {
+                    id: customer._id,
+                    name: customer.name,
+                    email: customer.email,
+                    phone: customer.phone,
+                    birthDay: customer.birthDay,
+                    role: customer.role
                 }
-            })
-        }
-        else {
-            res.status(404).json({ error: "Customer is not registered, please resgister.", code: 2 });
-        }
-    })
+                jwt.sign(payload, process.env.SECRET, (err, token) => {
+                    res.status(200).json({ token: `Bearer ${token}`, msg: 'Sucessfully logged in.' });
+                });
+            } else {
+                res.status(400).json(INCORRECT_PASSWORD);
+            }
+        })
+    }
+    catch(err) {
+        res.status(404).json(NOT_EXISTING_CUSTOMER);
+    }
 })
 
 /**
@@ -94,23 +93,18 @@ router.get('/profile', passport.authenticate('jwt', { session: false }), (req, r
  * @route GET /api/customers/:id
  * @desc Showing customer info
  * @access Private
- * @errors { 
- * code: 1 - Error with database,
- * code: 2 - Forbbiden
- * }
  */
 router.get('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
     if (req.user.role > 0) {
-        Customer.findById(req.params.id, (err, customer) => {
-            if (err) {
-                res.status(404).json({ error: err, code: 1 });
-            }
-            else {
-                res.status(200).json(customer);
-            }
-        });
+        try {
+            const customer = await Customer.findById(req.params.id);
+            res.status(200).json(customer);
+        } 
+        catch(err) {
+            res.status(400).json(DATABSE_ERROR);
+        }
     } else {
-        res.status(403).json({ error: 'Forbidden', code: 2 });
+        res.status(403).json(ACCESS_DENIED);
     }
 })
 
@@ -118,23 +112,18 @@ router.get('/:id', passport.authenticate('jwt', { session: false }), async (req,
  * @route GET /api/customers
  * @desc Showing all customers
  * @access Private
- * @errors { 
- * code: 1 - Error with database,
- * code: 2 - Forbidden
- * }
  */
 router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
     if (req.user.role > 0) {
-        Customer.find((err, customers) => {
-            if (err) {
-                res.status(404).json({ error: err , code: 1});
-            }
-            else {
-                res.status(200).json(customers);
-            }
-        });
+        try {
+            const customers = await Customer.find();
+            res.status(200).json(customers); 
+        }
+        catch(err) {
+            res.status(400).json(DATABSE_ERROR);
+        }
     } else {
-        res.status(403).json({ error: 'Forbidden', code: 2 });
+        res.status(403).json(ACCESS_DENIED);
     }
 })
 
@@ -142,25 +131,27 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
  * @route PUT /api/customers/:id
  * @desc Updating customer info
  * @access Private
- * @errors { 
- * code: 1 - Error with database,
- * code: 3 - Error with validation
- * }
  */
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     const { error } = customerValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0], code: 3 });
+        res.status(400).json({ error: error.details[0], code: VALIDATION_ERROR.code });
     }
     else {
-        Customer.findByIdAndUpdate(req.params.id, req.body, (err, customer) => {
-            if (err) {
-                res.status(404).json({ error: err, code: 1 });
-            }
-            else {
-                res.status(200).json({ customer, msg: 'Customer successfully updated.' });
-            }
-        })
+        const payload = {
+            name: req.body.name,
+            email: req.body.email,
+            password: bcrypt.hashSync(req.body.password, 10),
+            phone: req.body.phone,
+            birthDay: req.body.birthDay
+        };
+        try {
+            await Customer.findByIdAndUpdate(req.params.id, payload);
+            res.status(200).json({ customer: payload, msg: 'Customer successfully updated.' });
+        }
+        catch(err) {
+            res.status(400).json(DATABSE_ERROR);
+        }
     }
 })
 
@@ -168,19 +159,15 @@ router.put('/:id', (req, res) => {
  * @route DELETE /api/customers/:id
  * @desc Deleting customer from Database
  * @access Private
- * @errors { 
- * code: 1 - Error with database
- * }
  */
-router.delete('/:id', (req, res) => {
-    Customer.findByIdAndDelete(req.params.id, (err, customer) => {
-        if (err) {
-            res.status(404).json({ error: 'Customer not found.', code: 1 });
-        }
-        else {
-            res.status(200).json({ customer, msg: 'Customer successfully deleted.' });
-        }
-    })
+router.delete('/:id', async (req, res) => {
+    try {
+        const customer = await Customer.findByIdAndDelete(req.params.id);
+        res.status(200).json({ customer, msg: 'Customer successfully deleted.' });
+    }
+    catch(err) {
+        res.status(400).json(DATABSE_ERROR);
+    }
 })
 
 module.exports = router;
