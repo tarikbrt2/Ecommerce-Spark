@@ -1,4 +1,6 @@
 const express = require('express')
+const { VALIDATION_ERROR, DATABASE_ERROR } = require('../responses/errors');
+
 const router = express.Router()
 
 // Including order model
@@ -11,19 +13,21 @@ const { orderValidation } = require('../validation/validation');
  * @route POST /api/orders/
  * @desc Adding order
  * @access Public
- * @errors {
- * Code: 3 - Error with validation,
- * }
  */
 router.post('/', async (req, res) => {
     const { error } = orderValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0].message, code: 3 });
+        res.status(400).json({ error: error.details[0].message, code: VALIDATION_ERROR.code });
     }
     else {
         let order = new Order(req.body);
         order = await order.save();
-        res.status(200).json({ order, msg: 'Order successfully registered.' });
+        const payload = {
+            createdAt: order.createdAt,
+            cost: order.cost,
+            deliveryAddres: order.deliveryAddres,
+        }
+        res.status(200).json({ order: payload, msg: 'Order successfully registered.' });
     }
 })
 
@@ -31,63 +35,59 @@ router.post('/', async (req, res) => {
  * @route GET /api/orders
  * @desc Showing all orders
  * @access Public
- * @errors {
- * Code: 1 - Error with database,
- * }
  */
 router.get('/', async (req, res) => {
-    Order.find((err, orders) => {
-        if (err) {
-            res.status(404).json({ error: err, code: 1 });
-        }
-        else {
-            res.status(200).json(orders);
-        }
-    });
-})
+    try {
+        const orders = await Order.find(); 
+        res.status(200).json(orders);
+    }
+    catch(err) {
+        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+    }
+});
 
 /**
  * @route GET /api/orders/:id
  * @desc Showing order info
  * @access Public
- * @errors {
- *  Code: 1 - Error with database,
- * }
  */
 router.get('/:id', async (req, res) => {
-    Order.findById(req.params.id, (err, order) => {
-        if (err) {
-            res.status(404).json({ error: err, code: 1 });
+
+    try {
+        const order = await Order.findById(req.params.id);
+        const payload = {
+            createdAt: order.createdAt,
+            cost: order.cost,
+            deliveryAddres: order.deliveryAddres,
         }
-        else {
-            res.status(404).json(order);
-        }
-    });
+        res.status(200).json(payload);
+    } catch (err) {
+        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+    }
 })
 
 /**
  * @route PUT /api/orders/:id
  * @desc Updating order info
  * @access Private
- * @errors {
- * Code: 1 - Error with database,
- * Code: 3 - Error with validation,
- * }
  */
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     const { error } = orderValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0], code: 3 });
+        res.status(400).json({ error: error.details[0], code: VALIDATION_ERROR.code });
     }
     else {
-        Order.findByIdAndUpdate(req.params.id, { $set : { cost: req.body.cost, deliveryAddress: req.body.deliveryAddress } }, (err, order) => {
-            if (err) {
-                res.status(404).json({ error: 'Order not found.', code: 1 });
+        try {
+            const order = await Order.findByIdAndUpdate(req.params.id, { $set : { cost: req.body.cost, deliveryAddress: req.body.deliveryAddress } });
+            const payload = {
+                createdAt: order.createdAt,
+                cost: order.cost,
+                deliveryAddres: order.deliveryAddres,
             }
-            else {
-                res.status(200).json({ order, msg: 'Order successfully updated.' });
-            }
-        })
+            res.status(200).json({ order: payload, msg: 'Order successfully updated.' });
+        } catch (err) {
+            res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+        }
     }
 })
 
@@ -95,19 +95,19 @@ router.put('/:id', (req, res) => {
  * @route DELETE /api/orders/:id
  * @desc Deleting order from Database
  * @access Public
- * @errors {
- *  Code: 1 - Error with database,
- * }
  */
-router.delete('/:id', (req, res) => {
-    Order.findByIdAndDelete(req.params.id, (err, order) => {
-        if (err) {
-            res.status(404).json({ error: 'Order not found.', code: 1 });
+router.delete('/:id', async (req, res) => {
+    try {
+        const order = await Order.findByIdAndDelete(req.params.id);
+        const payload = {
+            createdAt: order.createdAt,
+            cost: order.cost,
+            deliveryAddres: order.deliveryAddres,
         }
-        else {
-            res.status(200).json({ order, msg: 'Order successfully deleted.' });
-        }
-    })
+        res.status(200).json({ order: payload, msg: 'Order successfully deleted.' });
+    } catch (err) {
+        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+    }
 })
 
 module.exports = router;

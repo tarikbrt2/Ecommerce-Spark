@@ -1,5 +1,7 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const { VALIDATION_ERROR, DATABASE_ERROR } = require('../responses/errors');
+
+const router = express.Router();
 
 // Including shippment model
 const { shippment } = require('../models/models');
@@ -11,19 +13,22 @@ const { shippmentValidation } = require('../validation/validation');
  * @route POST /api/shippments/
  * @desc Adding Shippment
  * @access Private
- * @errors {
- *  Code: 3 - Error with validation,
- * }
  */
 router.post('/', async (req, res) => {
     const { error } = shippmentValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0].message, code: 3 });
+        res.status(400).json({ error: error.details[0].message, code: VALIDATION_ERROR.code });
     }
     else {
         let shippment = new Shippment(req.body);
         shippment = await shippment.save();
-        res.status(200).json({ Shippment, msg: 'Shippment successfully registered.' });
+        const payload = {
+            senderAddress: req.body.senderAddress,
+            deliveryAddres: req.body.deliveryAddres,
+            createdAt: req.body.createdAt,
+            deliveredAt: req.body.deliveredAt,
+        };
+        res.status(200).json({ shippment: payload, msg: 'Shippment successfully registered.' });
     }
 })
 
@@ -31,63 +36,59 @@ router.post('/', async (req, res) => {
  * @route GET /api/shippments/:id
  * @desc Showing shippment info
  * @access Public
- * @errors {
- *  Code: 1 - Error with database,
- * }
  */
 router.get('/:id', async (req, res) => {
-    Shippment.findById(req.params.id, (err, shippment) => {
-        if (err) {
-            res.status(404).json({ error: err, code: 1 });
-        }
-        else {
-            res.status(200).json(shippment);
-        }
-    });
+    try {
+        await Shippment.findById(req.params.id);
+        const payload = {
+            senderAddress: shippment.senderAddress,
+            deliveryAddres: shippment.deliveryAddres,
+            createdAt: shippment.createdAt,
+            deliveredAt: shippment.deliveredAt,
+        };
+        res.status(200).json(payload);
+    } catch (err) {
+        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+    }
 })
 
 /**
  * @route GET /api/shippments
  * @desc Showing all shippments
  * @access Public
- * @errors {
- *  Code: 1 - Error with database,
- * }
  */
 router.get('/', async (req, res) => {
-    Shippment.find((err, shippments) => {
-        if (err) {
-            res.status(404).json({ error: err, code: 1 });
-        }
-        else {
-            res.status(200).json(shippments);
-        }
-    });
+    try {
+        const shippments = await Shippment.find();
+        res.status(200).json(shippments);
+    } catch (err) {
+        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+    }
 })
 
 /**
  * @route PUT /api/shippments/:id
  * @desc Updating shippment info
  * @access Private
- * @errors {
- *  Code: 1 - Error with database,
- *  Code: 3 - Error with validation,
- * }
  */
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     const { error } = shippmentValidation(req.body);
     if (error) {
-        res.status(404).json({ error: error.details[0], code: 3 });
+        res.status(400).json({ error: error.details[0], code: VALIDATION_ERROR.code });
     }
     else {
-        Shippment.findByIdAndUpdate(req.params.id, { $set: { senderAddress: req.body.senderAddress, deliveryAddress: req.body.deliveryAddress, deliveredAt: req.body.deliveredAt } }, (err, shippment) => {
-            if (err) {
-                res.status(404).json({ error: 'Shippment not found.', code: 1 });
-            }
-            else {
-                res.status(200).json({ shippment, msg: 'Shippment successfully updated.' });
-            }
-        })
+        try {
+            const shippment = await Shippment.findByIdAndUpdate(req.params.id);
+            const payload = {
+                senderAddress: shippment.senderAddress,
+                deliveryAddres: shippment.deliveryAddres,
+                createdAt: shippment.createdAt,
+                deliveredAt: shippment.deliveredAt,
+            };
+            res.status(200).json({ shippment:payload, msg: 'Shippment successfully updated.' });
+        } catch (err) {
+            res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+        }
     }
 })
 
@@ -95,19 +96,20 @@ router.put('/:id', (req, res) => {
  * @route DELETE /api/shippments/:id
  * @desc Deleting shippment from Database
  * @access Private
- * @errors {
- *  Code: 1 - Error with database,
- * }
  */
-router.delete('/:id', (req, res) => {
-    Shippment.findByIdAndDelete(req.params.id, (err, shippment) => {
-        if (err) {
-            res.status(404).json({ error: 'Shippment not found.', code: 1 });
-        }
-        else {
-            res.status(200).json({ shippment, msg: 'Shippment successfully deleted.' });
-        }
-    })
+router.delete('/:id', async (req, res) => {
+    try {
+        const shippment = await Shippment.findByIdAndDelete(req.params.id);
+        const payload = {
+            senderAddress: shippment.senderAddress,
+            deliveryAddres: shippment.deliveryAddres,
+            createdAt: shippment.createdAt,
+            deliveredAt: shippment.deliveredAt,
+        };
+        res.status(200).json({ shippment: payload, msg: 'Shippment successfully deleted.' });
+    } catch (err) {
+        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+    }
 })
 
 module.exports = router;
