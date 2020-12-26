@@ -28,9 +28,6 @@ const actions = {
     register(_, data) {
         return axios.post('/api/customers', data);
     },
-    capitalizeFirstLetter(_, string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    },
     getProfileInfo({ commit }, token) {
         axios.get('/api/customers/profile', {
             headers: {

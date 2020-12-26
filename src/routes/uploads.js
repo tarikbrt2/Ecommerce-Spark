@@ -34,7 +34,7 @@ const upload = multer({
 router.post('/', (req, res) => {
     upload(req, res, (err) => {
         if (err) {
-            res.status(400).json({ error: err, code: MULTER_ERROR.code });
+            res.status(400).json({ message: err, code: MULTER_ERROR.code });
         } else {
             console.log(req.file);
             res.status(200).json({ filename: req.file.filename, path: req.file.path });

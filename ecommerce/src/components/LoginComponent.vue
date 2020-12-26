@@ -58,7 +58,7 @@ export default {
         };
     },
     methods: {
-        ...mapActions(['loginUser', 'capitalizeFirstLetter']),
+        ...mapActions(['loginUser']),
         submit(data) {
             this.loginUser(data)
                 .then((response) => {
@@ -70,7 +70,7 @@ export default {
                         icon: 'check-circle',
                     });
                 })
-                .catch(async (err) => {
+                .catch((err) => {
                     // Getting error from backend
                     // If fields are empty,
                     // notifying user that he/she should fullfill all the fields
@@ -81,7 +81,7 @@ export default {
                         });
                     } else {
                         // Otherwise displaying error to user
-                        const message = await this.capitalizeFirstLetter(err.response.data.error);
+                        const message = err.response.data.message;
                         this.$toasted.show(message, {
                             duration: 3000,
                             icon: 'exclamation-circle',

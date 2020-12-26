@@ -84,7 +84,7 @@ export default {
         };
     },
     methods: {
-        ...mapActions(['register', 'capitalizeFirstLetter']),
+        ...mapActions(['register']),
         submit(data) {
             this.register(data)
                 .then(() => {
@@ -94,9 +94,8 @@ export default {
                     });
                     this.$router.push('/');
                 })
-                .catch(async (err) => {
-                    let message = err.response.data.error;
-                    message = await this.capitalizeFirstLetter(message.replace(/[^a-zA-Z ]/g, ''));
+                .catch((err) => {
+                    const message = err.response.data.message;
                     this.$toasted.show(message, {
                         duration: 3000,
                         icon: 'exclamation-circle',

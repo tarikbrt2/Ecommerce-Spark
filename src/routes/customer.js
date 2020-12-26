@@ -20,7 +20,7 @@ const { customerValidation } = require('../validation/validation');
 router.post('/', (req, res) => {
     const { error } = customerValidation(req.body);
     if (error) {
-        res.status(400).json({ error: error.details[0].message, code: VALIDATION_ERROR.code });
+        res.status(400).json({ message: error.details[0].message, code: VALIDATION_ERROR.code });
     }
     else {
         Customer.findOne({ email: req.body.email }).then(async (customer) => {
@@ -100,7 +100,7 @@ router.get('/:id', passport.authenticate('jwt', { session: false }), async (req,
             res.status(200).json(customer);
         } 
         catch(err) {
-            res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+            res.status(400).json({ message: err, code: DATABASE_ERROR.code });
         }
     } else {
         res.status(401).json(ACCESS_DENIED);
@@ -119,7 +119,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
             res.status(200).json(customers); 
         }
         catch(err) {
-            res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+            res.status(400).json({ message: err, code: DATABASE_ERROR.code });
         }
     } else {
         res.status(401).json(ACCESS_DENIED);
@@ -134,7 +134,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
 router.put('/:id', async (req, res) => {
     const { error } = customerValidation(req.body);
     if (error) {
-        res.status(400).json({ error: error.details[0], code: VALIDATION_ERROR.code });
+        res.status(400).json({ message: error.details[0], code: VALIDATION_ERROR.code });
     }
     else {
         const payload = {
@@ -149,7 +149,7 @@ router.put('/:id', async (req, res) => {
             res.status(200).json({ customer: payload, msg: 'Customer successfully updated.' });
         }
         catch(err) {
-            res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+            res.status(400).json({ message: err, code: DATABASE_ERROR.code });
         }
     }
 })
@@ -165,7 +165,7 @@ router.delete('/:id', async (req, res) => {
         res.status(200).json({ customer, msg: 'Customer successfully deleted.' });
     }
     catch(err) {
-        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+        res.status(400).json({ message: err, code: DATABASE_ERROR.code });
     }
 })
 

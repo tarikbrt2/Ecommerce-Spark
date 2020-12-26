@@ -17,7 +17,7 @@ const { productValidation } = require('../validation/validation');
 router.post('/', async (req, res) => {
     const { error } = productValidation(req.body);
     if (error) {
-        res.status(400).json({ error: error.details[0].message, code: VALIDATION_ERROR.code });
+        res.status(400).json({ message: error.details[0].message, code: VALIDATION_ERROR.code });
     }
     else {
         let product = new Product(req.body);
@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
             res.status(400).json(EMPTY_COLLECTION);
         }
     } catch (err) {
-        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+        res.status(400).json({ message: err, code: DATABASE_ERROR.code });
     }
 })
 
@@ -71,7 +71,7 @@ router.get('/:id', async (req, res) => {
         };
         res.status(200).json(payload);
     } catch (err) {
-        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+        res.status(400).json({ message: err, code: DATABASE_ERROR.code });
     }
 })
 
@@ -83,7 +83,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const { error } = productValidation(req.body);
     if (error) {
-        return res.status(400).json({ error: error.details[0], code: VALIDATION_ERROR.code });
+        return res.status(400).json({ message: error.details[0], code: VALIDATION_ERROR.code });
     }
     try {
         const product = await Product.findByIdAndUpdate(req.params.id, req.body);
@@ -97,7 +97,7 @@ router.put('/:id', async (req, res) => {
         };
         res.status(200).json({ product: payload, msg: 'Product successfully updated.' });
     } catch (err) {
-        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+        res.status(400).json({ message: err, code: DATABASE_ERROR.code });
     }
 })
 
@@ -119,7 +119,7 @@ router.delete('/:id', async (req, res) => {
         };
         res.status(200).json({ product: payload, msg: 'Product successfully deleted.' });
     } catch (err) {
-        res.status(400).json({ error: err, code: DATABASE_ERROR.code });
+        res.status(400).json({ message: err, code: DATABASE_ERROR.code });
     }
 })
 
