@@ -80,7 +80,7 @@ export default {
                             icon: 'exclamation-circle',
                         });
                     } else {
-                        // Otherwise displaying error to user
+                        // Otherwise displaying error to the user
                         const message = err.response.data.message;
                         this.$toasted.show(message, {
                             duration: 3000,
