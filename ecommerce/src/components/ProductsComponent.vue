@@ -16,6 +16,12 @@
                             :to="{ path: '/product/' + product._id }"
                             >INFO</router-link
                         >
+                        <a
+                            v-if="getAdmin"
+                            @click.prevent="submitDelete(product)"
+                            class="btn"
+                            >DELETE</a
+                        >
                     </div>
                 </div>
             </div>
@@ -30,20 +36,32 @@ export default {
     name: 'Products',
     created() {
         this.fetchProducts();
+        this.isAdmin();
     },
     methods: {
-        ...mapActions(['fetchProducts', 'addToCart']),
+        ...mapActions(['fetchProducts', 'addToCart', 'isAdmin', 'deleteProduct']),
         submit(data) {
             this.addToCart(data);
-            this.$toasted.show('You have sucessfully added this item to your cart.',
-            {
+            this.$toasted.show('You have sucessfully added this item to your cart.', {
                 duration: 3000,
                 icon: 'check-circle',
             });
         },
+        submitDelete(product) {
+            this.deleteProduct(product).then(() => {
+                this.$store.commit('deleteProduct', product._id);
+                this.$toasted.show('You have sucessfully deleted this product.', {
+                duration: 3000,
+                icon: 'check-circle',
+            });
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        },
     },
     computed: {
-        ...mapGetters(['getProducts']),
+        ...mapGetters(['getProducts', 'getAdmin']),
     },
 };
 </script>

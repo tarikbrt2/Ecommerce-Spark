@@ -70,6 +70,9 @@ const actions = {
     uploadImage(_, data) {
         return axios.post('/api/uploads/', data);
     },
+    deleteProduct(_, product) {
+        return axios.delete(`/api/products/${product._id}`);
+    },
 };
 
 const mutations = {
@@ -103,6 +106,9 @@ const mutations = {
     removeCart: (state) => {
         state.cart = [];
         localStorage.removeItem('cart');
+    },
+    deleteProduct: (state, id) => {
+        state.products = state.products.filter((product) => product._id !== id);
     },
 };
 
