@@ -2,7 +2,8 @@ const express = require('express')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
-const { VALIDATION_ERROR, DATABASE_ERROR, EXISTING_USER, NOT_EXISTING_CUSTOMER, ACCESS_DENIED, INVALID_CREDENTIALS } = require('../responses/errors');
+const { VALIDATION_ERROR, DATABASE_ERROR, EXISTING_USER, NOT_EXISTING_CUSTOMER, INVALID_CREDENTIALS } = require('../responses/errors');
+const { isAdmin } = require('../functions/verfiy');
 
 const router = express.Router();
 
@@ -93,17 +94,13 @@ router.get('/profile', passport.authenticate('jwt', { session: false }), (req, r
  * @desc Showing customer info
  * @access Private
  */
-router.get('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    if (req.user.role > 0) {
-        try {
-            const customer = await Customer.findById(req.params.id);
-            res.status(200).json(customer);
-        } 
-        catch(err) {
-            res.status(400).json({ message: err, code: DATABASE_ERROR.code });
-        }
-    } else {
-        res.status(401).json(ACCESS_DENIED);
+router.get('/:id', passport.authenticate('jwt', { session: false }), isAdmin, async (req, res) => {
+    try {
+        const customer = await Customer.findById(req.params.id);
+        res.status(200).json(customer);
+    } 
+    catch(err) {
+        res.status(400).json({ message: err, code: DATABASE_ERROR.code });
     }
 })
 
@@ -112,17 +109,13 @@ router.get('/:id', passport.authenticate('jwt', { session: false }), async (req,
  * @desc Showing all customers
  * @access Private
  */
-router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    if (req.user.role > 0) {
-        try {
-            const customers = await Customer.find();
-            res.status(200).json(customers); 
-        }
-        catch(err) {
-            res.status(400).json({ message: err, code: DATABASE_ERROR.code });
-        }
-    } else {
-        res.status(401).json(ACCESS_DENIED);
+router.get('/', passport.authenticate('jwt', { session: false }), isAdmin, async (req, res) => {
+    try {
+        const customers = await Customer.find();
+        res.status(200).json(customers); 
+    }
+    catch(err) {
+        res.status(400).json({ message: err, code: DATABASE_ERROR.code });
     }
 })
 
