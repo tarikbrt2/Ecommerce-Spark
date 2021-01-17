@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 3000;
 // Connection to DB 
 mongoose
   .connect(
-    'mongodb+srv://cluster0.xvjgt.mongodb.net/ecommerce?retryWrites=true&w=majority',
+    process.env.MONGO_URI,
     {
       auth: { user: process.env.DB_USER, password: process.env.DB_PASSWORD },
       authSource: 'admin',
