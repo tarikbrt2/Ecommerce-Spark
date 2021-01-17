@@ -26,11 +26,11 @@ describe('Customers API tests', () => {
     it('should GET /api/customers ( authorization )', (done) => {
         chai.request(server)
         .get('/api/customers')
-        .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGE0NjQ4MTI5YjY4NDBmYzE5OGVkZSIsIm5hbWUiOiJTdG9saWNhIiwiZW1haWwiOiJ0YXJpa0BnbWFpbC5jb20iLCJwaG9uZSI6IjEyMzEyMzEyMyIsImJpcnRoRGF5IjoiMjQvMDkvMjAwMSIsInJvbGUiOjEsImlhdCI6MTYwODM4Nzg3OH0.dJ-KkbOE1J5n_hEb360sTvPGvnYLCB4wrJnWphQzHOg')
+        .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGE0NjQ4MTI5YjY4NDBmYzE5OGVkZSIsIm5hbWUiOiJUYXJpayIsImVtYWlsIjoidGFyaWtAZ21haWwuY29tIiwicGhvbmUiOiIxMjM0NTY3ODkxIiwiYmlydGhEYXkiOiIyNC8wOS8yMDAxIiwicm9sZSI6MSwiaWF0IjoxNjEwOTE2OTAzfQ.BgO0RV1mOQTTL0teKBvBLThDuc3BDoPjMoivOIz0mK8')
         .end((err, response) => {
             response.should.have.status(200);
             response.body.should.be.a('array');
-            response.body.length.should.be.eq(13);
+            response.body.length.should.be.eq(27);
             done();
         });
     });
@@ -53,7 +53,7 @@ describe('Customers API tests', () => {
     it('should GET /api/customers/:id ( authorization )', (done) => {
         chai.request(server)
         .get('/api/customers/5fda4648129b6840fc198ede')
-        .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGE0NjQ4MTI5YjY4NDBmYzE5OGVkZSIsIm5hbWUiOiJTdG9saWNhIiwiZW1haWwiOiJ0YXJpa0BnbWFpbC5jb20iLCJwaG9uZSI6IjEyMzEyMzEyMyIsImJpcnRoRGF5IjoiMjQvMDkvMjAwMSIsInJvbGUiOjEsImlhdCI6MTYwODM4Nzg3OH0.dJ-KkbOE1J5n_hEb360sTvPGvnYLCB4wrJnWphQzHOg')
+        .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGE0NjQ4MTI5YjY4NDBmYzE5OGVkZSIsIm5hbWUiOiJUYXJpayIsImVtYWlsIjoidGFyaWtAZ21haWwuY29tIiwicGhvbmUiOiIxMjM0NTY3ODkxIiwiYmlydGhEYXkiOiIyNC8wOS8yMDAxIiwicm9sZSI6MSwiaWF0IjoxNjEwOTE2OTAzfQ.BgO0RV1mOQTTL0teKBvBLThDuc3BDoPjMoivOIz0mK8')
         .end((err, response) => {
             response.should.have.status(200);
             response.body.should.be.a('object');
@@ -75,7 +75,7 @@ describe('Customers API tests', () => {
         chai.request(server)
         .post('/api/customers')
         .send({
-            email: 'tarik.ttasrik2s@gmail.com',
+            email: 'qsqsqsq@gmail.com',
             password: '123456',
             phone: '123456789',
             birthDay: '24/09/2001',
@@ -91,7 +91,7 @@ describe('Customers API tests', () => {
     });
 
     /**
-     * Testing the POST /api/customers with unregistered account
+     * Testing the POST /api/customers with registered account
      */
     it('should POST /api/customers ( registered )', (done) => {
         chai.request(server)
@@ -104,9 +104,9 @@ describe('Customers API tests', () => {
             name: 'Tarik'
         })
         .end((err, response) => {
-            response.should.have.status(404);
+            response.should.have.status(400);
             response.body.should.be.a('Object');
-            response.body.should.have.property('error');
+            response.body.should.have.property('message');
             response.body.should.have.property('code');
             done();
         });

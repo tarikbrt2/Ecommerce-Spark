@@ -1,0 +1,13 @@
+language: node_js
+
+node_js:
+  - 11
+
+install:
+  - npm ci
+
+script:
+  - npm test
+
+notifications:
+  email: false
