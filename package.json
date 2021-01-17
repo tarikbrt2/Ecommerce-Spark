@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --exit",
     "client-build": "npm run build --prefix ecommerce",
     "server": "nodemon src/index.js",
     "client": "npm run serve --prefix ecommerce",
