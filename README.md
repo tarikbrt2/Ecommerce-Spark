@@ -3,6 +3,7 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
+[![Build Status](https://travis-ci.com/tarikbrt2/Ecommerce-Spark.svg?branch=master)](https://travis-ci.com/tarikbrt2/Ecommerce-Spark)
 
 <!-- TABLE OF CONTENTS -->
 <details open="open">
