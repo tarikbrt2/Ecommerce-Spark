@@ -5,7 +5,7 @@ node_js:
 
 install:
   - npm ci
-  - npm install -g @vue/cli
+  - npm install @vue/cli
 
 script:
   - npm run client-build
