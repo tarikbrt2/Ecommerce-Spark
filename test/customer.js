@@ -75,7 +75,7 @@ describe('Customers API tests', () => {
         chai.request(server)
         .post('/api/customers')
         .send({
-            email: 'qsqsqsq@gmail.com',
+            email: 'qsqsweqweqsq@gmail.com',
             password: '123456',
             phone: '123456789',
             birthDay: '24/09/2001',
