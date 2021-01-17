@@ -30,7 +30,7 @@ describe('Customers API tests', () => {
         .end((err, response) => {
             response.should.have.status(200);
             response.body.should.be.a('array');
-            response.body.length.should.be.eq(30);
+            response.body.length.should.be.eq(31);
             done();
         });
     });
@@ -75,7 +75,7 @@ describe('Customers API tests', () => {
         chai.request(server)
         .post('/api/customers')
         .send({
-            email: 'uzuzwqweuz@gmail.com',
+            email: 'wewewewewsas@gmail.com',
             password: '123456',
             phone: '123456789',
             birthDay: '24/09/2001',
