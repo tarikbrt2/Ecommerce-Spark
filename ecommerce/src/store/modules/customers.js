@@ -28,18 +28,26 @@ const actions = {
     register(_, data) {
         return axios.post('/api/customers', data);
     },
-    getProfileInfo({ commit }, token) {
-        axios.get('/api/customers/profile', {
-            headers: {
-                Authorization: token,
-            },
-        })
-        .then((response) => {
-            commit('setProfileInfo', response.data);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
+    getProfileInfo({ state, commit }, token) {
+        try {
+            jwtDecode(token.split(' ')[1]);
+            axios.get('/api/customers/profile', {
+                headers: {
+                    Authorization: token,
+                },
+            })
+            .then((response) => {
+                commit('setProfileInfo', response.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        } catch (err) {
+            state.admin = false;
+            state.token = '';
+            localStorage.setItem('token', state.token);
+            state.loggedIn = false;
+        }
     },
     isAdmin({ commit }) {
         commit('checkAdmin');

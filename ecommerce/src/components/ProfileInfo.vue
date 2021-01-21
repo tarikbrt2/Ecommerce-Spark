@@ -1,5 +1,5 @@
 <template>
-    <div class="profile-info">
+    <div class="profile-info" v-if="getToken">
         <div class="profile-info-header">
             <h1>PROFILE</h1>
             <button @click.prevent="logOut()" class="btn">LOGOUT</button>
